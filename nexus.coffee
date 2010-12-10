@@ -55,9 +55,9 @@ makeandblat = (override) ->
     riakdb.remove 'charsheets', override.name
   makeandsave override
 
-makeandblat { name: 'Dracula', player: 'Peter', virtue: 'Fortitude', vice: 'Pride', gnosis: 3, stats: { pre: 4, com: 5, sta: 4 }, skills: { blah: 4, medicine: 2, occult: 4, investigation: 2, crafts: 5 , science: 3, athletics: 5, larceny: 2, stealth: 4, socialize: 2, streetwise: 3 } }
-makeandblat { name: 'Longinus', player: 'Patrick', virtue: 'n/a', vice: 'All seven', gnosis: 6, stats: { int: 5, res: 4, sta: 1, man: 3 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 , brawl: 5, drive: 2, firearms: 5, intimidation: 5, persuasion: 2 } }
-makeandblat { name: 'Remus', player: 'Jason', virtue: 'Prudence', vice: 'Lust', gnosis: 4, size: 6, stats: { int: 3, res: 5, sta: 5, man: 4, com: 5 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 , survival: 5, weaponry: 3, 'animal ken': 1, empathy: 4, subterfuge: 5 } }
+makeandblat { name: 'Dracula', player: 'Peter', virtue: 'Fortitude', vice: 'Pride', gnosis: 3, stats: { pre: 4, com: 5, sta: 4 }, skills: { blah: 4, medicine: 2, occult: 4, investigation: 2, crafts: 5 , science: 3, athletics: 5, larceny: 2, stealth: 4, socialize: 2, streetwise: 3 }, flaws: [ "Numerophobia: Mild" ] }
+makeandblat { name: 'Longinus', player: 'Patrick', virtue: 'n/a', vice: 'All seven', gnosis: 6, stats: { int: 5, res: 4, sta: 1, man: 3 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 , brawl: 5, drive: 2, firearms: 5, intimidation: 5, persuasion: 2 }, flaws: [ "Ammoniel: Severe", "Schizophrenia: Mild", "Nightmares: Severe" ] }
+makeandblat { name: 'Remus', player: 'Jason', virtue: 'Prudence', vice: 'Lust', gnosis: 4, size: 6, stats: { int: 3, res: 5, sta: 5, man: 4, com: 5 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 , survival: 5, weaponry: 3, 'animal ken': 1, empathy: 4, subterfuge: 5 }, flaws: [ "Aluriophobia: Severe" ] }
 # This is my routing microframework. Until stuff stabilises with other frameworks, I'll just use this.
 choose_path = (url, res, routes) ->
   foo = url.url
@@ -176,6 +176,10 @@ showCharsheet = (res, name) ->
       ctx.fillText cs.name, 300, 335
       ctx.font = '26px Impact, Liberation Bitstream Vera'
       ctx.fillText cs.size.toString(), 670, 1358
+      flx = 0
+      for flaw in cs.flaws
+        ctx.fillText flaw, 615, 1238 + (41 * flx)
+        flx++
       ctx.font = '40px Impact, Liberation Bitstream Vera'
       if cs.player?
         ctx.fillText cs.player, 318, 394
