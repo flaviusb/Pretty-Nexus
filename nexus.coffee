@@ -9,22 +9,27 @@ Canvas = require('canvas')
 Image = Canvas.Image
 csimage = new Image
 circle =  new Image
+bigcircle =  new Image
 
 circle.onerr = (err) ->
   throw err
 csimage.onerr = (err) ->
+  throw err
+bigcircle.onerr = (err) ->
   throw err
 
 @csavail = false
 csimage.onload = ->
   @csavail = true
 circle.onload = ->
+bigcircle.onload = ->
 
 
 csimage.src = __dirname + '/cs.png'
 circle.src  = __dirname + '/b.png'
+bigcircle.src  = __dirname + '/BB2.png'
 
-riakdb.save('charsheets', 'default', { name: '', stats: { str: 2, dex: 2, sta: 2, int: 2, wit: 2, res: 2, pre: 2, man: 2, com: 2  }, skills: {  } })
+riakdb.save('charsheets', 'default', { name: '', size: 5, stats: { str: 2, dex: 2, sta: 2, int: 2, wit: 2, res: 2, pre: 2, man: 2, com: 2  }, skills: {  } })
 
 merge = (src, dest) ->
   for i, j of src
@@ -50,9 +55,9 @@ makeandblat = (override) ->
     riakdb.remove 'charsheets', override.name
   makeandsave override
 
-makeandblat { name: 'Dracula', player: 'Peter', virtue: 'Fortitude', vice: 'Pride', stats: { pre: 5, com: 5 }, skills: { blah: 4, medicine: 2, occult: 4, investigation: 2, crafts: 5 , science: 3 } }
-makeandblat { name: 'Longinus', player: 'Patrick', virtue: 'n/a', vice: 'All seven', stats: { int: 5, res: 4, sta: 1, man: 3 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 } }
-
+makeandblat { name: 'Dracula', player: 'Peter', virtue: 'Fortitude', vice: 'Pride', gnosis: 3, stats: { pre: 4, com: 5, sta: 4 }, skills: { blah: 4, medicine: 2, occult: 4, investigation: 2, crafts: 5 , science: 3 } }
+makeandblat { name: 'Longinus', player: 'Patrick', virtue: 'n/a', vice: 'All seven', gnosis: 6, stats: { int: 5, res: 4, sta: 1, man: 3 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 } }
+makeandblat { name: 'Remus', player: 'Jason', virtue: 'Prudence', vice: 'Lust', gnosis: 4, size: 6, stats: { int: 3, res: 5, sta: 5, man: 4, com: 5 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 } }
 # This is my routing microframework. Until stuff stabilises with other frameworks, I'll just use this.
 choose_path = (url, res, routes) ->
   foo = url.url
@@ -133,9 +138,12 @@ posgrid = {
     # subterfuge:
     #}
   }
+  gnosis:    [ 1036, 1132 ]
+  willpower: [ 1036, 921  ]
+  health:    [ 1036, 827  ]
 }
 
-dotsStat = (ctx, num, x, y) ->
+dotsStat  = (ctx, num, x, y) ->
   if num? and num >= 1
     for i in [1..num]
       ctx.drawImage(circle, x + ((circle.width - 1) * (i - 1)), y, circle.width, circle.height)
@@ -144,6 +152,17 @@ dotsSkill = (ctx, num, x, y) ->
   if num? and num >= 1
     for i in [1..num]
       ctx.drawImage(circle, x + ((circle.width) * (i - 1)), y, circle.width, circle.height)
+
+dotWG     = (ctx, num, x, y) ->
+  if num? and num >= 1
+    for i in [1..num]
+      ctx.drawImage(bigcircle, x + ((bigcircle.width + 13.75) * (i - 1)), y, bigcircle.width, bigcircle.height)
+
+dotHealth = (ctx, num, x, y) ->
+  if num? and num >= 1
+    for i in [1..num]
+      ctx.drawImage(bigcircle, x + ((bigcircle.width - 0.5) * (i - 1)), y, bigcircle.width, bigcircle.height)
+
 
 showCharsheet = (res, name) ->
   riakdb.get 'charsheets', name, (err, cs) ->
@@ -155,6 +174,9 @@ showCharsheet = (res, name) ->
       ctx.drawImage(csimage, 0, 0, csimage.width, csimage.height)
       ctx.font = '40px Impact, Liberation Bitstream Vera'
       ctx.fillText cs.name, 300, 335
+      ctx.font = '26px Impact, Liberation Bitstream Vera'
+      ctx.fillText cs.size.toString(), 670, 1358
+      ctx.font = '40px Impact, Liberation Bitstream Vera'
       if cs.player?
         ctx.fillText cs.player, 318, 394
       if cs.virtue?
@@ -162,11 +184,15 @@ showCharsheet = (res, name) ->
       if cs.vice?
         ctx.fillText cs.vice,   795, 449
       if cs.stats?
+        dotHealth ctx, cs.stats.sta + cs.size, posgrid.health[0], posgrid.health[1]
+        dotWG ctx, cs.stats.res + cs.stats.com, posgrid.willpower[0], posgrid.willpower[1]
         for k, v of posgrid.stats
           dotsStat(ctx, cs.stats[k], v[0], v[1])
       if cs.skills?
         for k, v of posgrid.skills
           dotsSkill(ctx, cs.skills[k], v[0], v[1])
+      if cs.gnosis?
+        dotWG ctx, cs.gnosis, posgrid.gnosis[0],  posgrid.gnosis[1]
       buf = canvas.toBuffer()
       res.writeHeader 200, 'Content-Type': 'image/png'
       buf2 = new Buffer(buf.length)
