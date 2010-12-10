@@ -6,4 +6,5 @@ charsheet
       <#{k}> #{v} </#{k}>
   skills
     - each v,k in skills
-      <#{k}> #{v} </#{k}>
+      - var ksafe = k.replace(" ", "-")
+        <#{ksafe}> #{v} </#{ksafe}>
