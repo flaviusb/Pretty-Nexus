@@ -55,9 +55,9 @@ makeandblat = (override) ->
     riakdb.remove 'charsheets', override.name
   makeandsave override
 
-makeandblat { name: 'Dracula', player: 'Peter', virtue: 'Fortitude', vice: 'Pride', gnosis: 3, stats: { pre: 4, com: 5, sta: 4 }, skills: { blah: 4, medicine: 2, occult: 4, investigation: 2, crafts: 5 , science: 3, athletics: 5, larceny: 2, stealth: 4, socialize: 2, streetwise: 3 }, flaws: [ "Numerophobia: Mild" ], merits: [ { name: 'Striking Looks', num: 2 }, { name: 'Resources', num: 3 } ] }
-makeandblat { name: 'Longinus', player: 'Patrick', virtue: 'n/a', vice: 'All seven', gnosis: 6, stats: { int: 5, res: 4, sta: 1, man: 3 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 , brawl: 5, drive: 2, firearms: 5, intimidation: 5, persuasion: 2 }, flaws: [ "Ammoniel: Severe", "Schizophrenia: Mild", "Nightmares: Severe" ], merits: [ { name: 'Destiny', num: 5 }, { name: 'Status', num: 3 }, { name: 'Contacts', num: 1 }, { name: 'Allies: Angelic', num: 5 }, { name: 'Fame', num: 5 } ] }
-makeandblat { name: 'Remus', player: 'Jason', virtue: 'Prudence', vice: 'Lust', gnosis: 4, size: 6, stats: { int: 3, res: 5, sta: 5, man: 4, com: 5 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 , survival: 5, weaponry: 3, 'animal ken': 1, empathy: 4, subterfuge: 5 }, flaws: [ "Aluriophobia: Severe" ] }
+makeandblat { name: 'Dracula', player: 'Peter', virtue: 'Fortitude', vice: 'Pride', gnosis: 3, stats: { pre: 4, com: 5, sta: 4 }, skills: { blah: 4, medicine: 2, occult: 4, investigation: 2, crafts: 5 , science: 3, athletics: 5, larceny: 2, stealth: 4, socialize: 2, streetwise: 3 }, flaws: [ "Numerophobia: Mild" ], merits: [ { name: 'Striking Looks', num: 2 }, { name: 'Resources', num: 3 } ], arcana: { space: 2, spirit: 2, time: 2, fate: 2, matter: 2, death: 2 } }
+makeandblat { name: 'Longinus', player: 'Patrick', virtue: 'n/a', vice: 'All seven', gnosis: 6, stats: { int: 5, res: 4, sta: 1, man: 3 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 , brawl: 5, drive: 2, firearms: 5, intimidation: 5, persuasion: 2 }, flaws: [ "Ammoniel: Severe", "Schizophrenia: Mild", "Nightmares: Severe" ], merits: [ { name: 'Destiny', num: 5 }, { name: 'Status', num: 3 }, { name: 'Contacts', num: 1 }, { name: 'Allies: Angelic', num: 5 }, { name: 'Fame', num: 5 } ], cabal: 'Lancea Sanctum', path: 'Mastigos/Obrimos', order: 'Unaligned', arcana: { mind: 4, death: 1, prime: 2, forces: 5 } }
+makeandblat { name: 'Remus', player: 'Jason', virtue: 'Prudence', vice: 'Lust', gnosis: 4, size: 6, stats: { int: 3, res: 5, sta: 5, man: 4, com: 5 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 , survival: 5, weaponry: 3, 'animal ken': 1, empathy: 4, subterfuge: 5 }, flaws: [ "Aluriophobia: Severe" ], arcana: { life: 2, forces: 2 }  }
 # This is my routing microframework. Until stuff stabilises with other frameworks, I'll just use this.
 choose_path = (url, res, routes) ->
   foo = url.url
@@ -141,6 +141,18 @@ posgrid = {
   gnosis:    [ 1036, 1132 ]
   willpower: [ 1036, 921  ]
   health:    [ 1036, 827  ]
+  arcana: {
+    death:  [ 871, 1588 ]
+    fate:   [ 871, 1620 ]
+    forces: [ 871, 1650 ]
+    life:   [ 871, 1682 ]
+    mind:   [ 871, 1742 ]
+    matter: [ 871, 1712 ]
+    prime:  [ 871, 1773 ]
+    space:  [ 871, 1804 ]
+    spirit: [ 871, 1835 ]
+    time:   [ 871, 1866 ]
+  }
 }
 
 dotsStat  = (ctx, num, x, y) ->
@@ -208,6 +220,9 @@ showCharsheet = (res, name) ->
       if cs.skills?
         for k, v of posgrid.skills
           dotsSkill(ctx, cs.skills[k], v[0], v[1])
+      if cs.arcana?
+        for k, v of posgrid.arcana
+          dotsSkill(ctx, cs.arcana[k], v[0], v[1])
       if cs.gnosis?
         dotWG ctx, cs.gnosis, posgrid.gnosis[0],  posgrid.gnosis[1]
       buf = canvas.toBuffer()
