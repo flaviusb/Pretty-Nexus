@@ -101,6 +101,38 @@ posgrid = {
     man: [1305, 624 ]
     com: [1305, 678 ]
   }
+  skills: {
+    #mental: {
+      academics:       [ 431, 853  ]
+      computer:        [ 431, 892  ]
+      crafts:          [ 431, 931  ]
+      investigation:   [ 431, 970  ]
+      medicine:        [ 431, 1009 ]
+      occult:          [ 431, 1048 ]
+      politics:        [ 431, 1087 ]
+      science:         [ 431, 1126 ] 
+    #}
+    #physical: {
+    # athletics:
+    # brawl:
+    # drive:
+    # firearms:
+    # larceny:
+    # stealth:
+    # survival:
+    # weaponry:
+    #}
+    #social: {
+    # 'animal Ken':
+    # empathy:
+    # expression:
+    # intimidation:
+    # persuasion:
+    # socialize:
+    # streetwise:
+    # subterfuge:
+    #}
+  }
 }
 
 dots = (ctx, num, x, y) ->
