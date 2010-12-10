@@ -50,8 +50,8 @@ makeandblat = (override) ->
     riakdb.remove 'charsheets', override.name
   makeandsave override
 
-makeandblat { name: 'Dracula',  stats: { pre: 5, com: 5 }, skills: { blah: 4, medicine: 2, occult: 4, investigation: 2, crafts: 5 , science: 3 } }
-makeandblat { name: 'Longinus', stats: { int: 5, res: 4, sta: 1, man: 3 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 } }
+makeandblat { name: 'Dracula', player: 'Peter', virtue: 'Fortitude', vice: 'Pride', stats: { pre: 5, com: 5 }, skills: { blah: 4, medicine: 2, occult: 4, investigation: 2, crafts: 5 , science: 3 } }
+makeandblat { name: 'Longinus', player: 'Patrick', virtue: 'n/a', vice: 'All seven', stats: { int: 5, res: 4, sta: 1, man: 3 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 } }
 
 # This is my routing microframework. Until stuff stabilises with other frameworks, I'll just use this.
 choose_path = (url, res, routes) ->
@@ -155,6 +155,12 @@ showCharsheet = (res, name) ->
       ctx.drawImage(csimage, 0, 0, csimage.width, csimage.height)
       ctx.font = '40px Impact, Liberation Bitstream Vera'
       ctx.fillText cs.name, 300, 335
+      if cs.player?
+        ctx.fillText cs.player, 318, 394
+      if cs.virtue?
+        ctx.fillText cs.virtue, 840, 394
+      if cs.vice?
+        ctx.fillText cs.vice,   795, 449
       if cs.stats?
         for k, v of posgrid.stats
           dotsStat(ctx, cs.stats[k], v[0], v[1])
