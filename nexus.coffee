@@ -135,10 +135,15 @@ posgrid = {
   }
 }
 
-dots = (ctx, num, x, y) ->
-  if num >= 1
+dotsStat = (ctx, num, x, y) ->
+  if num? and num >= 1
     for i in [1..num]
       ctx.drawImage(circle, x + ((circle.width - 1) * (i - 1)), y, circle.width, circle.height)
+
+dotsSkill = (ctx, num, x, y) ->
+  if num? and num >= 1
+    for i in [1..num]
+      ctx.drawImage(circle, x + ((circle.width) * (i - 1)), y, circle.width, circle.height)
 
 showCharsheet = (res, name) ->
   riakdb.get 'charsheets', name, (err, cs) ->
@@ -150,8 +155,12 @@ showCharsheet = (res, name) ->
       ctx.drawImage(csimage, 0, 0, csimage.width, csimage.height)
       ctx.font = '40px Impact, Liberation Bitstream Vera'
       ctx.fillText cs.name, 300, 335
-      for k, v of posgrid.stats
-        dots(ctx, cs.stats[k], v[0], v[1])
+      if cs.stats?
+        for k, v of posgrid.stats
+          dotsStat(ctx, cs.stats[k], v[0], v[1])
+      if cs.skills?
+        for k, v of posgrid.skills
+          dotsSkill(ctx, cs.skills[k], v[0], v[1])
       buf = canvas.toBuffer()
       res.writeHeader 200, 'Content-Type': 'image/png'
       buf2 = new Buffer(buf.length)
