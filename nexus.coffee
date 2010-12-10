@@ -177,14 +177,16 @@ showCharsheet = (res, name) ->
       ctx.font = '26px Impact, Liberation Bitstream Vera'
       ctx.fillText cs.size.toString(), 670, 1358
       flx = 0
-      for flaw in cs.flaws
-        ctx.fillText flaw, 615, 1238 + (41 * flx)
-        flx++
+      if cs.flaws?
+        for flaw in cs.flaws
+          ctx.fillText flaw, 615, 1238 + (41 * flx)
+          flx++
       flx = 0
-      for merit in cs.merits
-        ctx.fillText merit.name, 615, 869 + (38.5 * flx)
-        dotsSkill ctx, merit.num, 870, 853 + (38.5 * flx)
-        flx++
+      if cs.merits?
+        for merit in cs.merits
+          ctx.fillText merit.name, 615, 869 + (38.5 * flx)
+          dotsSkill ctx, merit.num, 870, 853 + (38.5 * flx)
+          flx++
       ctx.font = '40px Impact, Liberation Bitstream Vera'
       if cs.player?
         ctx.fillText cs.player, 318, 394
