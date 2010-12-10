@@ -55,9 +55,9 @@ makeandblat = (override) ->
     riakdb.remove 'charsheets', override.name
   makeandsave override
 
-makeandblat { name: 'Dracula', player: 'Peter', virtue: 'Fortitude', vice: 'Pride', gnosis: 3, stats: { pre: 4, com: 5, sta: 4 }, skills: { blah: 4, medicine: 2, occult: 4, investigation: 2, crafts: 5 , science: 3 } }
-makeandblat { name: 'Longinus', player: 'Patrick', virtue: 'n/a', vice: 'All seven', gnosis: 6, stats: { int: 5, res: 4, sta: 1, man: 3 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 } }
-makeandblat { name: 'Remus', player: 'Jason', virtue: 'Prudence', vice: 'Lust', gnosis: 4, size: 6, stats: { int: 3, res: 5, sta: 5, man: 4, com: 5 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 } }
+makeandblat { name: 'Dracula', player: 'Peter', virtue: 'Fortitude', vice: 'Pride', gnosis: 3, stats: { pre: 4, com: 5, sta: 4 }, skills: { blah: 4, medicine: 2, occult: 4, investigation: 2, crafts: 5 , science: 3, athletics: 5, larceny: 2, stealth: 4, socialize: 2, streetwise: 3 } }
+makeandblat { name: 'Longinus', player: 'Patrick', virtue: 'n/a', vice: 'All seven', gnosis: 6, stats: { int: 5, res: 4, sta: 1, man: 3 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 , brawl: 5, drive: 2, firearms: 5, intimidation: 5, persuasion: 2 } }
+makeandblat { name: 'Remus', player: 'Jason', virtue: 'Prudence', vice: 'Lust', gnosis: 4, size: 6, stats: { int: 3, res: 5, sta: 5, man: 4, com: 5 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 , survival: 5, weaponry: 3, 'animal ken': 1, empathy: 4, subterfuge: 5 } }
 # This is my routing microframework. Until stuff stabilises with other frameworks, I'll just use this.
 choose_path = (url, res, routes) ->
   foo = url.url
@@ -115,27 +115,27 @@ posgrid = {
       medicine:        [ 431, 1009 ]
       occult:          [ 431, 1048 ]
       politics:        [ 431, 1087 ]
-      science:         [ 431, 1126 ] 
+      science:         [ 431, 1126 ]
     #}
     #physical: {
-    # athletics:
-    # brawl:
-    # drive:
-    # firearms:
-    # larceny:
-    # stealth:
-    # survival:
-    # weaponry:
+      athletics:       [ 431, 1240 ]
+      brawl:           [ 431, 1279 ]
+      drive:           [ 431, 1318 ]
+      firearms:        [ 431, 1357 ]
+      larceny:         [ 431, 1396 ]
+      stealth:         [ 431, 1435 ]
+      survival:        [ 431, 1474 ]
+      weaponry:        [ 431, 1513 ]
     #}
     #social: {
-    # 'animal Ken':
-    # empathy:
-    # expression:
-    # intimidation:
-    # persuasion:
-    # socialize:
-    # streetwise:
-    # subterfuge:
+      'animal ken':    [ 431, 1601 ]
+      empathy:         [ 431, 1640 ]
+      expression:      [ 431, 1679 ]
+      intimidation:    [ 431, 1718 ]
+      persuasion:      [ 431, 1757 ]
+      socialize:       [ 431, 1796 ]
+      streetwise:      [ 431, 1835 ]
+      subterfuge:      [ 431, 1874 ]
     #}
   }
   gnosis:    [ 1036, 1132 ]
