@@ -127,8 +127,8 @@ showCharsheet = (res, name) ->
       res.end(buf2)
 
 myRoutes = [
-  [ /^\/charsheet\/([a-zA-Z]*)$/, getCharsheet ]
-  [ /^\/scharsheet\/([a-zA-Z]*)$/, showCharsheet ]
+  [ /^\/charsheet\/([a-zA-Z]*)[.\/]xml$/, getCharsheet ]
+  [ /^\/charsheet\/([a-zA-Z]*)[.\/]png$/, showCharsheet ]
   [ /^\/$/, index ]
   [ /^(.*)$/, fourohfour ]
 ]
