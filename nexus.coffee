@@ -45,8 +45,13 @@ makeandsave = (override) ->
   makecharsheet override, (sheet) ->
     riakdb.save('charsheets', sheet.name, sheet)
 
-makeandsave { name: 'Dracula',  stats: { pre: 5, com: 5 }, skills: { blah: 4 } }
-makeandsave { name: 'Longinus', stats: { int: 5, res: 3, sta: 2 }, skills: { academics: 4 } }
+makeandblat = (override) ->
+  if override.name?
+    riakdb.remove 'charsheets', override.name
+  makeandsave override
+
+makeandblat { name: 'Dracula',  stats: { pre: 5, com: 5 }, skills: { blah: 4, medicine: 2, occult: 4, investigation: 2, crafts: 5 , science: 3 } }
+makeandblat { name: 'Longinus', stats: { int: 5, res: 4, sta: 1, man: 3 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 } }
 
 # This is my routing microframework. Until stuff stabilises with other frameworks, I'll just use this.
 choose_path = (url, res, routes) ->
