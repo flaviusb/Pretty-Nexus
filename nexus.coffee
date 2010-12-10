@@ -189,12 +189,18 @@ showCharsheet = (res, name) ->
           flx++
       ctx.font = '40px Impact, Liberation Bitstream Vera'
       if cs.player?
-        ctx.fillText cs.player, 318, 394
+        ctx.fillText cs.player, 318,  394
       if cs.virtue?
-        ctx.fillText cs.virtue, 840, 394
+        ctx.fillText cs.virtue, 840,  394
       if cs.vice?
-        ctx.fillText cs.vice,   795, 449
-      if cs.stats?
+        ctx.fillText cs.vice,   795,  449
+      if cs.path?
+        ctx.fillText cs.path,   1214, 334
+     if cs.order?
+        ctx.fillText cs.order,  1233, 397
+     if cs.cabal?
+        ctx.fillText cs.cabal,  1231, 453
+     if cs.stats?
         dotHealth ctx, cs.stats.sta + cs.size, posgrid.health[0], posgrid.health[1]
         dotWG ctx, cs.stats.res + cs.stats.com, posgrid.willpower[0], posgrid.willpower[1]
         for k, v of posgrid.stats
