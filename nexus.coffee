@@ -1,5 +1,6 @@
 http = require 'http'
 urls = require 'url'
+querystring = require 'querystring'
 
 jade = require './vendor/jade'
 
@@ -59,32 +60,37 @@ makeandblat { name: 'Dracula', player: 'Peter', virtue: 'Fortitude', vice: 'Prid
 makeandblat { name: 'Longinus', player: 'Patrick', virtue: 'n/a', vice: 'All seven', gnosis: 6, stats: { int: 5, res: 4, sta: 1, man: 3 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 , brawl: 5, drive: 2, firearms: 5, intimidation: 5, persuasion: 2 }, flaws: [ "Ammoniel: Severe", "Schizophrenia: Mild", "Nightmares: Severe" ], merits: [ { name: 'Destiny', num: 5 }, { name: 'Status', num: 3 }, { name: 'Contacts', num: 1 }, { name: 'Allies: Angelic', num: 5 }, { name: 'Fame', num: 5 } ], cabal: 'Lancea Sanctum', path: 'Mastigos/Obrimos', order: 'Unaligned', arcana: { mind: 4, death: 1, prime: 2, forces: 5 }, wisdom: 3 }
 makeandblat { name: 'Remus', player: 'Jason', virtue: 'Prudence', vice: 'Lust', gnosis: 4, size: 6, stats: { int: 3, res: 5, sta: 5, man: 4, com: 5 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 , survival: 5, weaponry: 3, 'animal ken': 1, empathy: 4, subterfuge: 5 }, flaws: [ "Aluriophobia: Severe" ], arcana: { life: 2, forces: 2 }, wisdom: 6  }
 # This is my routing microframework. Until stuff stabilises with other frameworks, I'll just use this.
-choose_path = (url, res, routes) ->
-  foo = url.url
+choose_path = (req, res, routes) ->
+  url = urls.parse(req.url).pathname
   for [i, j] in routes
-    it = i(foo)
+    it = i(url)
     if it
-      j(res, it[1..])
+      j(req, res, it[1..])
       break
 
 
-index = (res) ->
+index = (req, res) ->
   res.writeHeader 200, 'Content-Type': 'text/html'
   options = locals: {}
   jade.renderFile __dirname + "/index.jade", options, (error, data) ->
     res.write data
     res.end()
 
-fourohfour = (res, url) ->
+fourohfour = (req, res, url) ->
   res.writeHeader 404, 'Content-Type': 'text/html'
   options = locals: { url: url }
   jade.renderFile __dirname + "/404.jade", options, (error, data) ->
     res.write data
     res.end()
 
+editdone = (req, res, url) ->
+  res.writeHeader 200, 'Content-Type': 'text/html'
+  options = locals: { url: url }
+  jade.renderFile __dirname + "/done.jade", options, (error, data) ->
+    res.write data
+    res.end()
 
-getCharsheet = (res, name) ->
-  #options = locals: { name: 'foo', stats: { str: 2, dex: 2, sta: 3  } }
+getCharsheet = (req, res, name) ->
   riakdb.get 'charsheets', name, (err, cs) ->
     if err
       fourohfour(res, 'character sheet for: ' + name)
@@ -93,6 +99,20 @@ getCharsheet = (res, name) ->
       jade.renderFile __dirname + "/charsheet.jade", { locals: cs }, (error, data) ->
         res.write data
         res.end()
+
+editCharsheet = (req, res, name) ->
+  riakdb.get 'charsheets', name, (err, cs) ->
+    if err
+      fourohfour(res, 'character sheet for: ' + name)
+    else
+      src = querystring.parse(urls.parse(req.url).query)
+      console.log src
+      newcs = merge src, cs
+      makeandblat newcs
+      editdone req, res, name
+
+
+
 
 posgrid = {
   stats: {
@@ -183,7 +203,7 @@ dotWis    = (ctx, num, x, y) ->
       ctx.drawImage(circle, x, y - ((circle.width + 8.5) * (i - 1)), circle.width, circle.height)
 
 
-showCharsheet = (res, name) ->
+showCharsheet = (req, res, name) ->
   riakdb.get 'charsheets', name, (err, cs) ->
     if err
       fourohfour(res, 'image for character sheet for: ' + name)
@@ -241,6 +261,7 @@ showCharsheet = (res, name) ->
       res.end(buf2)
 
 myRoutes = [
+  [ /^\/editcharsheet\/([a-zA-Z]*)$/, editCharsheet ]
   [ /^\/charsheet\/([a-zA-Z]*)[.\/]xml$/, getCharsheet ]
   [ /^\/charsheet\/([a-zA-Z]*)[.\/]png$/, showCharsheet ]
   [ /^\/$/, index ]
