@@ -80,15 +80,13 @@ fourohfour = (req, res, url) ->
   res.writeHeader 404, 'Content-Type': 'text/html'
   options = locals: { url: url }
   jade.renderFile __dirname + "/404.jade", options, (error, data) ->
-    res.write data
-    res.end()
+    res.end data
 
 editdone = (req, res, url) ->
   res.writeHeader 200, 'Content-Type': 'text/html'
   options = locals: { url: url }
   jade.renderFile __dirname + "/done.jade", options, (error, data) ->
-    res.write data
-    res.end()
+    res.end data
 
 getCharsheet = (req, res, name) ->
   riakdb.get 'charsheets', name, (err, cs) ->
@@ -97,8 +95,16 @@ getCharsheet = (req, res, name) ->
     else
       res.writeHeader 200, 'Content-Type': 'application/xml'
       jade.renderFile __dirname + "/charsheet.jade", { locals: cs }, (error, data) ->
-        res.write data
-        res.end()
+        res.end data
+
+getJSONCharsheet = (req, res, name) ->
+  riakdb.get 'charsheets', name, (err, cs) ->
+    if err
+      fourohfour(res, 'character sheet for: ' + name)
+    else
+      res.writeHeader 200, 'Content-Type': 'application/json'
+      res.end JSON.stringify(cs)
+
 
 editCharsheet = (req, res, name) ->
   riakdb.get 'charsheets', name, (err, cs) ->
@@ -263,6 +269,7 @@ showCharsheet = (req, res, name) ->
 myRoutes = [
   [ /^\/editcharsheet\/([a-zA-Z]*)$/, editCharsheet ]
   [ /^\/charsheet\/([a-zA-Z]*)[.\/]xml$/, getCharsheet ]
+  [ /^\/charsheet\/([a-zA-Z]*)[.\/]json$/, getJSONCharsheet ]
   [ /^\/charsheet\/([a-zA-Z]*)[.\/]png$/, showCharsheet ]
   [ /^\/$/, index ]
   [ /^(.*)$/, fourohfour ]
