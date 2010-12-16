@@ -225,11 +225,13 @@ showCharsheet = (req, res, name) ->
       request = ocamlserver.request 'POST', '/', { host: 'localhost', 'content-type': 'application/x-www-form-urlencoded', 'content-length': foo.length}
       request.write foo
       request.end()
-      res.writeHeader 200, 'Content-Type': 'image/png'      
+      res.writeHeader 200, 'Content-Type': 'image/png'
       request.on 'response', (response) ->
+        response.setEncoding 'base64'
         response.on 'data', (chunk) ->
-          res.write chunk
-        response.on 'end', ->
+          buf = new Buffer(chunk, 'base64')
+          res.write buf
+        response.on 'end', () ->
           res.end()
 
 

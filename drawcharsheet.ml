@@ -77,7 +77,7 @@ let drawskills ctx (sk: Charsheetgen.skillblock) =
   dsk sk.subterfuge     1874. ;;
 
 open Printf
-let drawsheet (cs: Charsheetgen.charsheet) = 
+let drawsheet (cs: Charsheetgen.charsheet)  = 
     (* Setup Cairo *)
     let surface = image_surface_create Cairo.FORMAT_ARGB32 ~width ~height in
     let ctx = Cairo.create surface in
@@ -109,18 +109,24 @@ let drawsheet (cs: Charsheetgen.charsheet) =
         drawstats ctx sb;
         print_string "Statblock"
     | `Spiritblock sb -> print_string "Spiritblock" );
-    Cairo_png.surface_write_to_file surface "newcharsheet.png" ;
-    print_string "Written new charsheet." ;;
+    let img = Filename.temp_file ~temp_dir:"/home/justin/code/Android-Nexus/temp/" "charsheet" ".png" in
+    Cairo_png.surface_write_to_file surface img ;
+    ("../../../../.." ^ img) ;; (* this is needed as Http_Daemon only supports
+    relative file paths *)
+    (*Cairo_png.surface_write_to_channel surface outchan ;; *)
 
 open Http_types
 
 let callback req outchan =
-  print_string "init" ;
-  print_string req#body ;
   let data = charsheet_of_string req#body in
   print_string "foo" ;
-  drawsheet data ;
-  Http_daemon.respond ~code:(`Code 200) ~body:("a") outchan
+  let img = drawsheet data in
+  (* Http.daemon.send_basic_headers ~code:(`Code 200) outchan ; *)
+  (* Http_daemon.send_status_line ~code:(`Code 200) outchan ;
+  Http_daemon.send_CRLF outchan ; *)
+  Http_daemon.respond_file img outchan ;;
+  (*drawsheet data outchan ;
+  close_out outchan;;*)
 
 let spec =
   { Http_daemon.default_spec with
