@@ -109,12 +109,15 @@ let drawsheet (cs: Charsheetgen.charsheet) =
         drawstats ctx sb;
         print_string "Statblock"
     | `Spiritblock sb -> print_string "Spiritblock" );
-    Cairo_png.surface_write_to_file surface "triangle.png" ;;
+    Cairo_png.surface_write_to_file surface "newcharsheet.png" ;
+    print_string "Written new charsheet." ;;
 
 open Http_types
 
 let callback req outchan =
-  let data = charsheet_of_string (List.assoc "cs" req#params) in
+  print_string "init" ;
+  print_string req#body ;
+  let data = charsheet_of_string req#body in
   print_string "foo" ;
   drawsheet data ;
   Http_daemon.respond ~code:(`Code 200) ~body:("a") outchan
