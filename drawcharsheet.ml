@@ -77,9 +77,8 @@ let drawskills ctx (sk: Charsheetgen.skillblock) =
   dsk sk.subterfuge     1874. ;;
 
 open Printf
-let drawsheet (cs: Charsheetgen.charsheet)  = 
-    (* Setup Cairo *)
-    let surface = image_surface_create Cairo.FORMAT_ARGB32 ~width ~height in
+
+let drawsheet (cs: Charsheetgen.charsheet) surface  = 
     let ctx = Cairo.create surface in
 
     (* Set thickness of brush *)
@@ -108,19 +107,45 @@ let drawsheet (cs: Charsheetgen.charsheet)  =
       `Statblock sb ->
         drawstats ctx sb;
         print_string "Statblock"
-    | `Spiritblock sb -> print_string "Spiritblock" );
-    let img = Filename.temp_file ~temp_dir:"/home/justin/code/Android-Nexus/temp/" "charsheet" ".png" in
-    Cairo_png.surface_write_to_file surface img ;
-    ("../../../../.." ^ img) ;; (* this is needed as Http_Daemon only supports
-    relative file paths *)
-    (*Cairo_png.surface_write_to_channel surface outchan ;; *)
+    | `Spiritblock sb -> print_string "Spiritblock" ) ;;
+
+let drawsheet_png cs =
+  (* Setup Cairo *)
+  let surface = image_surface_create Cairo.FORMAT_ARGB32 ~width ~height in
+  drawsheet cs surface;
+  (* Rain dance to serve the image *)
+  let img = Filename.temp_file ~temp_dir:"/home/justin/code/Android-Nexus/temp/" "charsheet" ".png" in
+  Cairo_png.surface_write_to_file surface img ;
+  ("../../../../.." ^ img) ;; (* this is needed as Http_Daemon only supports
+  relative file paths *)
+  (*Cairo_png.surface_write_to_channel surface outchan ;; *)
+
+let drawsheet_pdf cs =
+  (* Setup Cairo *)
+  let img = Filename.temp_file ~temp_dir:"/home/justin/code/Android-Nexus/temp/"
+  "charsheet" ".pdf" in
+  let outout = open_out_bin img in
+  let surface = Cairo_pdf.surface_create_for_channel outout
+  (float_of_int width) (float_of_int height) in
+  drawsheet cs surface;
+  (* Rain dance to serve the image *)
+  surface_flush surface;
+  surface_finish surface;
+  flush outout ;
+  close_out outout ;
+  ("../../../../.." ^ img) ;; (* this is needed as Http_Daemon only supports
+  relative file paths *)
+  (*Cairo_png.surface_write_to_channel surface outchan ;; *)
+
 
 open Http_types
 
 let callback req outchan =
   let data = charsheet_of_string req#body in
   print_string "foo" ;
-  let img = drawsheet data in
+  let img = (match req#path with
+    "/png" -> drawsheet_png data
+  | "/pdf" -> drawsheet_pdf data) in
   (* Http.daemon.send_basic_headers ~code:(`Code 200) outchan ; *)
   (* Http_daemon.send_status_line ~code:(`Code 200) outchan ;
   Http_daemon.send_CRLF outchan ; *)

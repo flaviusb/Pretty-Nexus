@@ -215,17 +215,35 @@ dotWis    = (ctx, num, x, y) ->
       ctx.drawImage(circle, x, y - ((circle.width + 8.5) * (i - 1)), circle.width, circle.height)
 
 ocamlserver = http.createClient 9999, '127.0.0.1'
-showCharsheet = (req, res, name) ->
+showCharsheetPng = (req, res, name) ->
   riakdb.get 'charsheets', name, (err, cs) ->
     if err
       fourohfour(req, res, 'image for character sheet for: ' + name)
     else
       #console.log (querystring.escape ("cs="+JSON.stringify(cs)))
       foo =  (JSON.stringify(cs))
-      request = ocamlserver.request 'POST', '/', { host: 'localhost', 'content-type': 'application/x-www-form-urlencoded', 'content-length': foo.length}
+      request = ocamlserver.request 'POST', '/png', { host: 'localhost', 'content-type': 'application/x-www-form-urlencoded', 'content-length': foo.length}
       request.write foo
       request.end()
       res.writeHeader 200, 'Content-Type': 'image/png'
+      request.on 'response', (response) ->
+        response.setEncoding 'base64'
+        response.on 'data', (chunk) ->
+          buf = new Buffer(chunk, 'base64')
+          res.write buf
+        response.on 'end', () ->
+          res.end()
+showCharsheetPdf = (req, res, name) ->
+  riakdb.get 'charsheets', name, (err, cs) ->
+    if err
+      fourohfour(req, res, 'pdf for character sheet for: ' + name)
+    else
+      #console.log (querystring.escape ("cs="+JSON.stringify(cs)))
+      foo =  (JSON.stringify(cs))
+      request = ocamlserver.request 'POST', '/pdf', { host: 'localhost', 'content-type': 'application/x-www-form-urlencoded', 'content-length': foo.length}
+      request.write foo
+      request.end()
+      res.writeHeader 200, 'Content-Type': 'application/pdf'
       request.on 'response', (response) ->
         response.setEncoding 'base64'
         response.on 'data', (chunk) ->
@@ -296,7 +314,8 @@ myRoutes = [
   [ /^\/editcharsheet\/([a-zA-Z]*)$/, editCharsheet ]
   [ /^\/charsheet\/([a-zA-Z]*)[.\/]xml$/, getCharsheet ]
   [ /^\/charsheet\/([a-zA-Z]*)[.\/]json$/, getJSONCharsheet ]
-  [ /^\/charsheet\/([a-zA-Z]*)[.\/]png$/, showCharsheet ]
+  [ /^\/charsheet\/([a-zA-Z]*)[.\/]png$/, showCharsheetPng ]
+  [ /^\/charsheet\/([a-zA-Z]*)[.\/]pdf$/, showCharsheetPdf ]
   [ /^\/$/, index ]
   [ /^(.*)$/, fourohfour ]
 ]
