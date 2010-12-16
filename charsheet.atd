@@ -1,0 +1,66 @@
+type charsheet = {
+  name: string ; 
+  ?player: string option ;
+  ?virtue: string option ;
+  ?vice: string option ;
+  ~power <ocaml default="0">  : int ;
+  ~power_type <ocaml default="\"Supernatural Advantadge\""> : string ;
+  stats: statb;
+  ?skills: skillblock option ;
+  ?merits: ( string * int ) list option ;
+  advantadges : advantadgesblock ;
+  ?morality : morals option ;
+}
+type morals = {
+  ~moral_amount: int ;
+  ~moral_path <ocaml default="\"Morality\""> : string ;
+}
+type statb = [ Statblock of statblock | Spiritblock of spiritblock ]
+type statblock = {
+  int <ocaml name="intelligence"> : int ;
+  wit: int ;
+  res: int ;
+  str: int ;
+  dex: int ;
+  sta: int ;
+  pre: int ;
+  man: int ;
+  com: int ;
+}
+type spiritblock = {
+  power: int ;
+  finesse : int;
+  resistance : int;
+} <ocaml field_prefix="spirit_">
+type skillblock = { 
+  ?academics: int option ;
+  ?computer: int option ;
+  ?crafts: int option ;
+  ?investigation: int option ;
+  ?medicine: int option ;
+  ?occult: int option ;
+  ?politics: int option ;
+  ?science: int option ;
+  ?athletics: int option ;
+  ?brawl: int option ;
+  ?drive: int option ;
+  ?firearms: int option ;
+  ?larceny: int option ;
+  ?stealth: int option ;
+  ?survival: int option ;
+  ?weaponry: int option ;
+  ?animal_ken <json name="\"animal ken\""> : int option ;
+  ?empathy: int option ;
+  ?expression: int option ;
+  ?intimidation: int option ;
+  ?persuasion: int option ;
+  ?socialize: int option ;
+  ?streetwise: int option ;
+  ?subterfuge: int option ;
+}
+type advantadgesblock = {
+  arcana: int ;
+}
+
+
+
