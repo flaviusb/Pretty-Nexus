@@ -12,11 +12,19 @@ type charsheet = {
   ?morality : morals option ;
   ?arcana: arcanablock option ;
   ?size <ocaml name="character_size">: int option ;
+  ?major_type: string option ;
+  ?first_affiliation: string option ;
+  ?second_affiliation: string option ;
+  ?cabal: string option ;
 }
 type morals = {
   ~moral_amount: int ;
   ~moral_path <ocaml default="\"Morality\""> : string ;
 }
+type singlevariance = {
+  name: string ;
+  num:  int ; 
+} <ocaml field_prefix="var_">
 type arcanablock = {
   ?death:  int option ;
   ?fate:   int option ;

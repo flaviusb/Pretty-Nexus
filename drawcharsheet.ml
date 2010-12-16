@@ -24,16 +24,22 @@ let draw_x ctx glyph (num: int) xc yc xi yi =
 
 open BatOption
 let may_draw_x ctx glyph (num: int option) xc yc xi yi =
-  may (fun (it: int) -> draw_x ctx glyph it xc yc xi yi) num ;;
+  may (fun it -> draw_x ctx glyph it xc yc xi yi) num ;;
+
+let draw_y ctx glyph num xc yc xi yi =
+  draw_rep ctx glyph num xc yc xi (0. -. (yi +. (float_of_int
+  (image_surface_get_height glyph)))) ;;
 
 let may_draw_y ctx glyph num xc yc xi yi =
-  may (fun it -> draw_rep ctx glyph it xc yc xi
-  (yi +. (float_of_int (image_surface_get_height glyph)))) num ;;
+  may (fun it -> draw_y ctx glyph it xc yc xi yi) num ;;
 
-let may_text ctx text x y =
+let draw_text ctx text x y =
   Cairo.set_source_rgb ctx 0. 0. 0. ;
   Cairo.move_to ctx x y ;
-  may (Cairo.show_text ctx) text ;;
+  Cairo.show_text ctx text ;;
+
+let may_text ctx text x y =
+  may (fun txt -> draw_text ctx txt x y) text ;;
 
 open Charsheetgen
 
@@ -98,16 +104,31 @@ let drawsheet (cs: Charsheetgen.charsheet) surface  =
     Cairo.select_font_face ctx "Goudy" FONT_SLANT_NORMAL FONT_WEIGHT_NORMAL ;
     Cairo.set_font_size ctx 50. ;
 
+    draw_text ctx cs.name  300. 335. ;
     may_text ctx cs.player 318. 394. ;
     may_text ctx cs.virtue 840. 394. ;
     may_text ctx cs.vice   795. 449. ;
+
+    may_text ctx cs.first_affiliation   1214. 334. ;
+    may_text ctx cs.second_affiliation  1233. 397. ;
+    may_text ctx cs.cabal               1231. 453. ;
+
+    draw_x ctx bigcircle cs.power 1036. 1132. 13.75 0. ;
+    (match cs.stats with
+      `Statblock sb ->
+        may (fun size ->
+          draw_x ctx bigcircle (sb.sta + size) 1036. 827. (-0.5) 0.)
+        cs.character_size ;
+        draw_x ctx bigcircle (sb.com + sb.res) 1036. 921. 13.75 0.
+    | `Spiritblock sb -> print_string "Spiritblock should not appear here" ) ;
+    may (fun morals -> draw_y ctx circle morals.moral_amount 1378. 1512. 0.
+    9.5) cs.morality ;
 
     may (drawskills ctx) cs.skills ;
     (match cs.stats with
       `Statblock sb ->
         drawstats ctx sb;
-        print_string "Statblock"
-    | `Spiritblock sb -> print_string "Spiritblock" ) ;;
+    | `Spiritblock sb -> print_string "Spiritblock should not appear here" ) ;;
 
 let drawsheet_png cs =
   (* Setup Cairo *)
