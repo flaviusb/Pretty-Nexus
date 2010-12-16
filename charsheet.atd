@@ -8,12 +8,26 @@ type charsheet = {
   stats: statb;
   ?skills: skillblock option ;
   ?merits: ( string * int ) list option ;
-  advantadges : advantadgesblock ;
+  ?advantadges : advantadgesblock option ;
   ?morality : morals option ;
+  ?arcana: arcanablock option ;
+  ?size <ocaml name="character_size">: int option ;
 }
 type morals = {
   ~moral_amount: int ;
   ~moral_path <ocaml default="\"Morality\""> : string ;
+}
+type arcanablock = {
+  ?death:  int option ;
+  ?fate:   int option ;
+  ?forces: int option ;
+  ?life:   int option ;
+  ?mind:   int option ;
+  ?matter: int option ;
+  ?prime:  int option ;
+  ?space:  int option ;
+  ?spirit: int option ;
+  ?time:   int option ;
 }
 type statb = [ Statblock of statblock | Spiritblock of spiritblock ]
 type statblock = {
@@ -59,7 +73,7 @@ type skillblock = {
   ?subterfuge: int option ;
 }
 type advantadgesblock = {
-  arcana: int ;
+  otheradvantadges: int ;
 }
 
 
