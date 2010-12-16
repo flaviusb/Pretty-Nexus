@@ -19,10 +19,12 @@ let draw_auto ctx glyph num xc yc xi yi =
   draw_rep ctx glyph num xc yc (xi +. (float_of_int (image_surface_get_width glyph)))
   (yi +. (float_of_int (image_surface_get_height glyph)));;
 
+let draw_x ctx glyph (num: int) xc yc xi yi =
+  draw_rep ctx glyph num xc yc (xi +. (float_of_int (image_surface_get_width glyph))) yi ;;
+
 open BatOption
 let may_draw_x ctx glyph (num: int option) xc yc xi yi =
-  may (fun (it: int) -> draw_rep ctx glyph it xc yc 
-  (xi +. (float_of_int (image_surface_get_width glyph))) yi) num ;;
+  may (fun (it: int) -> draw_x ctx glyph it xc yc xi yi) num ;;
 
 let may_draw_y ctx glyph num xc yc xi yi =
   may (fun it -> draw_rep ctx glyph it xc yc xi
@@ -34,6 +36,17 @@ let may_text ctx text x y =
   may (Cairo.show_text ctx) text ;;
 
 open Charsheetgen
+
+let drawstats ctx sb =
+  draw_x ctx circle sb.intelligence  568. 572. (-1.) 0. ;
+  draw_x ctx circle sb.wit           568. 625. (-1.) 0. ;
+  draw_x ctx circle sb.res           568. 678. (-1.) 0. ;
+  draw_x ctx circle sb.str           920. 572. (-1.) 0. ;
+  draw_x ctx circle sb.dex           920. 624. (-1.) 0. ;
+  draw_x ctx circle sb.sta           920. 677. (-1.) 0. ;
+  draw_x ctx circle sb.pre          1305. 573. (-1.) 0. ;
+  draw_x ctx circle sb.man          1305. 625. (-1.) 0. ;
+  draw_x ctx circle sb.com          1305. 678. (-1.) 0. ;;
 
 let drawskills ctx (sk: Charsheetgen.skillblock) = 
   let dsk = (fun (num: int option) (y: float) -> 
@@ -63,6 +76,7 @@ let drawskills ctx (sk: Charsheetgen.skillblock) =
   dsk sk.streetwise     1835. ;
   dsk sk.subterfuge     1874. ;;
 
+open Printf
 let drawsheet (cs: Charsheetgen.charsheet) = 
     (* Setup Cairo *)
     let surface = image_surface_create Cairo.FORMAT_ARGB32 ~width ~height in
@@ -90,10 +104,13 @@ let drawsheet (cs: Charsheetgen.charsheet) =
     may_text ctx cs.vice   795. 449. ;
 
     may (drawskills ctx) cs.skills ;
-    
+    (match cs.stats with
+      `Statblock sb ->
+        drawstats ctx sb;
+        print_string "Statblock"
+    | `Spiritblock sb -> print_string "Spiritblock" );
     Cairo_png.surface_write_to_file surface "triangle.png" ;;
 
-open Printf
 open Http_types
 
 let callback req outchan =
