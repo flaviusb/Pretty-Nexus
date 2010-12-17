@@ -145,6 +145,10 @@ let drawsheet (cs: Charsheetgen.charsheet) surface  =
         i) *. 41.)) ;
       done
     ) cs.flaws ;
+    Cairo.select_font_face ctx "Goudy" FONT_SLANT_NORMAL FONT_WEIGHT_NORMAL ;
+    may (fun size -> draw_text ctx (string_of_int size) 670. 1358. )
+      cs.character_size ;
+    may (fun xp -> draw_text ctx (string_of_int xp)     740. 1516. ) cs.xp ;
 
     may (drawskills ctx) cs.skills ;
     (match cs.stats with

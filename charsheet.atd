@@ -18,6 +18,7 @@ type charsheet = {
   ?cabal: string option ;
   ?flaws: string list option ;
   ?rote_skills: rote_skill list option ;
+  ?xp: int option ;
 }
 type rote_skill = [
     Academics
