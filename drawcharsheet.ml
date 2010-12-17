@@ -88,16 +88,7 @@ let drawsheet (cs: Charsheetgen.charsheet) surface  =
     let ctx = Cairo.create surface in
 
     (* Set thickness of brush *)
-    Cairo.set_line_width ctx 15. ;
-
-    (* Draw out the triangle using absolute coordinates *)
-    Cairo.move_to     ctx   200.  100. ;
-    Cairo.line_to     ctx   300.  300. ;
-    Cairo.rel_line_to ctx (-200.)   0. ;
-    Cairo.close_path  ctx ;
-
-    (* Apply the ink *)
-    Cairo.stroke ctx ;
+    Cairo.set_line_width ctx 4. ;
 
     Cairo.set_source_surface ctx bg 0. 0. ;
     Cairo.paint ctx ;
@@ -124,11 +115,79 @@ let drawsheet (cs: Charsheetgen.charsheet) surface  =
     may (fun morals -> draw_y ctx circle morals.moral_amount 1378. 1512. 0.
     9.5) cs.morality ;
 
+    may (fun ar ->
+      let dar num y = may_draw_x ctx circle num 871. y (-0.5) 0. in
+      dar ar.death  1588. ;
+      dar ar.fate   1620. ;
+      dar ar.forces 1650. ;
+      dar ar.life   1682. ;
+      dar ar.mind   1742. ;
+      dar ar.matter 1712. ;
+      dar ar.prime  1773. ;
+      dar ar.space  1804. ;
+      dar ar.spirit 1835. ;
+      dar ar.time   1866. ;
+    ) cs.arcana ;
+
+    Cairo.select_font_face ctx "bulkyRefuse Type" FONT_SLANT_NORMAL FONT_WEIGHT_NORMAL ;
+    Cairo.set_font_size ctx 26. ;
+    may (fun merits -> 
+      for i = 0 to ((List.length merits) - 1) do
+        draw_text ctx (fst (List.nth merits i)) 615. (869. +. ((float_of_int
+        i) *. 39.)) ;
+        draw_x ctx circle (snd (List.nth merits i)) 870. (852. +. ((float_of_int
+        i) *. 39.)) (-0.5) 0. 
+      done
+    ) cs.merits ;
+    may (fun flaws ->
+      for i = 0 to ((List.length flaws) - 1) do
+        draw_text ctx (List.nth flaws i) 615. (1238. +. ((float_of_int
+        i) *. 41.)) ;
+      done
+    ) cs.flaws ;
+
     may (drawskills ctx) cs.skills ;
     (match cs.stats with
       `Statblock sb ->
         drawstats ctx sb;
-    | `Spiritblock sb -> print_string "Spiritblock should not appear here" ) ;;
+    | `Spiritblock sb -> print_string "Spiritblock should not appear here" ) ;
+    may (fun rotes ->
+      Cairo.set_source_rgb ctx 0. 0. 0. ;
+      List.iter (fun rote ->
+        Cairo.move_to ctx 200. (match rote with 
+            `Academics      ->  843.
+          | `Computer       ->  881.
+          | `Crafts         ->  920.
+          | `Investigation  ->  959.
+          | `Medicine       ->  997.
+          | `Occult         -> 1035.
+          | `Politics       -> 1073.
+          | `Science        -> 1111.
+          | `Athletics      -> 1232.
+          | `Brawl          -> 1271.
+          | `Drive          -> 1309.
+          | `Firearms       -> 1348.
+          | `Larceny        -> 1386.
+          | `Stealth        -> 1424.
+          | `Survival       -> 1462.
+          | `Weaponry       -> 1500.
+          | `Animal_ken     -> 1591.
+          | `Empathy        -> 1629.
+          | `Expression     -> 1667.
+          | `Intimidation   -> 1705.
+          | `Persuasion     -> 1743.
+          | `Socialize      -> 1781.
+          | `Streetwise     -> 1819.
+          | `Subterfuge     -> 1857.) ;
+        Cairo.rel_line_to ctx 30. 30. ;
+        Cairo.close_path ctx ;
+        (*Cairo.stroke ctx ;*)
+        Cairo.rel_move_to ctx 30. 0. ;
+        Cairo.rel_line_to ctx (-30.) 30. ;
+        Cairo.close_path ctx ;
+        Cairo.stroke ctx ;
+      ) rotes ;
+    ) cs.rote_skills;;
 
 let drawsheet_png cs =
   (* Setup Cairo *)

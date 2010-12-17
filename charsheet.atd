@@ -16,7 +16,35 @@ type charsheet = {
   ?first_affiliation: string option ;
   ?second_affiliation: string option ;
   ?cabal: string option ;
+  ?flaws: string list option ;
+  ?rote_skills: rote_skill list option ;
 }
+type rote_skill = [
+    Academics
+  | Computer
+  | Crafts
+  | Investigation
+  | Medicine
+  | Occult
+  | Politics
+  | Science
+  | Athletics
+  | Brawl
+  | Drive
+  | Firearms
+  | Larceny
+  | Stealth
+  | Survival
+  | Weaponry
+  | Animal_ken 
+  | Empathy
+  | Expression
+  | Intimidation
+  | Persuasion
+  | Socialize
+  | Streetwise
+  | Subterfuge
+] 
 type morals = {
   ~moral_amount: int ;
   ~moral_path <ocaml default="\"Morality\""> : string ;
