@@ -19,6 +19,7 @@ type charsheet = {
   ?flaws: string list option ;
   ?rote_skills: rote_skill list option ;
   ?xp: int option ;
+  ~xp_total <ocaml default="0">: int ;
 }
 type rote_skill = [
     Academics

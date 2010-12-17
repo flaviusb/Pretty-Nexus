@@ -148,12 +148,19 @@ let drawsheet (cs: Charsheetgen.charsheet) surface  =
     Cairo.select_font_face ctx "Goudy" FONT_SLANT_NORMAL FONT_WEIGHT_NORMAL ;
     may (fun size -> draw_text ctx (string_of_int size) 670. 1358. )
       cs.character_size ;
-    may (fun xp -> draw_text ctx (string_of_int xp)     740. 1516. ) cs.xp ;
+    may (fun xp -> draw_text ctx 
+      ((string_of_int xp) ^ " unspent" ^ (if (cs.xp_total != 0) || (xp == 0)
+      then ", of " ^ (string_of_int cs.xp_total) ^ " total" else "")) 740. 1516. ) cs.xp ;
 
     may (drawskills ctx) cs.skills ;
     (match cs.stats with
       `Statblock sb ->
-        drawstats ctx sb;
+        drawstats ctx sb ;
+        (* Draw derived stats defence, initiative mod, and speed here.
+         * This should take into account merits, spells etc as well    *)
+        draw_text ctx (string_of_int (min sb.dex sb.wit)) 715. 1398. ;
+        draw_text ctx (string_of_int (sb.dex + sb.com)) 777. 1438. ;
+        draw_text ctx (string_of_int (sb.str + sb.dex + 5)) 700. 1478. ;
     | `Spiritblock sb -> print_string "Spiritblock should not appear here" ) ;
     may (fun rotes ->
       Cairo.set_source_rgb ctx 0. 0. 0. ;
