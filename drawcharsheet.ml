@@ -148,10 +148,13 @@ let drawsheet (cs: Charsheetgen.charsheet) surface  =
     Cairo.select_font_face ctx "Goudy" FONT_SLANT_NORMAL FONT_WEIGHT_NORMAL ;
     may (fun size -> draw_text ctx (string_of_int size) 670. 1358. )
       cs.character_size ;
+
+    Cairo.set_font_size ctx 24. ;
     may (fun xp -> draw_text ctx 
       ((string_of_int xp) ^ " unspent" ^ (if (cs.xp_total != 0) || (xp == 0)
-      then ", of " ^ (string_of_int cs.xp_total) ^ " total" else "")) 740. 1516. ) cs.xp ;
+      then ", of " ^ (string_of_int cs.xp_total) ^ " total" else "")) 735. 1516. ) cs.xp ;
 
+    Cairo.set_font_size ctx 26. ;
     may (drawskills ctx) cs.skills ;
     (match cs.stats with
       `Statblock sb ->
@@ -198,7 +201,21 @@ let drawsheet (cs: Charsheetgen.charsheet) surface  =
         Cairo.close_path ctx ;
         Cairo.stroke ctx ;
       ) rotes ;
-    ) cs.rote_skills;;
+    ) cs.rote_skills;
+    Cairo.set_font_size ctx 14. ;    
+    draw_text ctx (match cs.power with
+        0  -> "N/A"
+      | 1  -> "1"
+      | 2  -> "2"
+      | 3  -> "3"
+      | 4  -> "4"
+      | 5  -> "5"
+      | 6  -> "6"
+      | 7  -> "7"
+      | 8  -> "8"
+      | 9  -> "10"
+      | 10 -> "15"
+      | _  -> "?") 1266. 1087. ;;
 
 let drawsheet_png cs =
   (* Setup Cairo *)
