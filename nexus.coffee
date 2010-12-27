@@ -6,8 +6,6 @@ jade = require './vendor/jade'
 
 riakdb = require('riak-js').getClient()
 
-riakdb.save('charsheets', 'default', { name: '', size: 5, stats: ["Statblock", { str: 2, dex: 2, sta: 2, int: 2, wit: 2, res: 2, pre: 2, man: 2, com: 2  }], skills: {  } })
-
 merge = (src, dest) ->
   if src instanceof Array
     if dest instanceof Array and src[0] is "Statblock"
@@ -21,8 +19,6 @@ merge = (src, dest) ->
       dest[i] = j
   return dest
        
-
-
 makecharsheet = (override, todo) ->
   riakdb.get 'charsheets', 'default', (err, blank) ->
     blank = merge override, blank
@@ -38,11 +34,13 @@ makeandblat = (override) ->
   makeandsave override
 
 ###
-makeandblat { name: 'Dracula', player: 'Peter', virtue: 'Fortitude', vice: 'Pride', gnosis: 3, stats: { pre: 4, com: 5, sta: 4 }, skills: { blah: 4, medicine: 2, occult: 4, investigation: 2, crafts: 5 , science: 3, athletics: 5, larceny: 2, stealth: 4, socialize: 2, streetwise: 3 }, flaws: [ "Numerophobia: Mild" ], merits: [ { name: 'Striking Looks', num: 2 }, { name: 'Resources', num: 3 } ], arcana: { space: 2, spirit: 2, time: 2, fate: 2, matter: 2, death: 2 }, wisdom: 8 }
-makeandblat { name: 'Longinus', player: 'Patrick', virtue: 'n/a', vice: 'All seven', gnosis: 6, stats: { int: 5, res: 4, sta: 1, man: 3 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 , brawl: 5, drive: 2, firearms: 5, intimidation: 5, persuasion: 2 }, flaws: [ "Ammoniel: Severe", "Schizophrenia: Mild", "Nightmares: Severe" ], merits: [ { name: 'Destiny', num: 5 }, { name: 'Status', num: 3 }, { name: 'Contacts', num: 1 }, { name: 'Allies: Angelic', num: 5 }, { name: 'Fame', num: 5 } ], cabal: 'Lancea Sanctum', path: 'Mastigos/Obrimos', order: 'Unaligned', arcana: { mind: 4, death: 1, prime: 2, forces: 5 }, wisdom: 3 }
-makeandblat { name: 'Remus', player: 'Jason', virtue: 'Prudence', vice: 'Lust', gnosis: 4, size: 6, stats: { int: 3, res: 5, sta: 5, man: 4, com: 5 }, skills: { academics: 4, investigation: 1, computer: 5, politics: 1 , survival: 5, weaponry: 3, 'animal ken': 1, empathy: 4, subterfuge: 5 }, flaws: [ "Aluriophobia: Severe" ], arcana: { life: 2, forces: 2 }, wisdom: 6  }
-###
+# Example for saving raw charactersheet data to the riak datastore:
+riakdb.save('charsheets', 'default', { name: '', size: 5, stats: ["Statblock", { str: 2, dex: 2, sta: 2, int: 2, wit: 2, res: 2, pre: 2, man: 2, com: 2  }], skills: {  } })
+
+# Example for makeandblat:
 makeandblat { name: 'Dracula', player: 'Peter', virtue: 'Fortitude', vice: 'Pride', power: 3, power_type: "Gnosis", stats: ["Statblock", { dex: 3, pre: 4, com: 5, sta: 4 }], skills: { medicine: 2, occult: 4, investigation: 2, crafts: 5 , science: 3, athletics: 5, larceny: 2, stealth: 4, socialize: 2, streetwise: 3 }, arcana: { space: 2, spirit: 2, time: 2, fate: 2, matter: 2, death: 2 }, morality: {moral_amount: 8, moral_path: "Humanity" }, first_affiliation: "Path", second_affiliation: "Order", cabal: "ST Team", merits: [ ['Resources', 3], ['Fame', 4], ['Destiny', 1], ['Herd', 5], ['Haven', 2], ['Allies: Emos', 1] ], flaws: [ "Ammoniel: Severe", "Schizophrenia: Mild", "Nightmares: Severe" ], rote_skills: ["Computer", "Medicine", "Occult"], xp : 110, xp_total: 500 }
+###
+
 # This is my routing microframework. Until stuff stabilises with other frameworks, I'll just use this.
 choose_path = (req, res, routes) ->
   url = urls.parse(req.url).pathname
